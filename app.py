@@ -26,18 +26,32 @@ class Url(db.Model):
 def index():
     if request.method == 'POST':
         url_long = request.form['content']
+
+        if len(url_long) > 2044:
+            flash('Too long of a url!')
+            return redirect('/')
+
         found_url = Url.query.filter_by(long= url_long).first()
+        url = re.sub("https?://", "", request.url_root)
+
         if found_url:
-            flash('Already known!')
+            flash(f'Your url is: {url}{found_url.short}')
+
         else:
             url_short = namer.generate_url()
-            url = re.sub("https?://", "", request.url_root)
+            tries = 0
+
+            while Url.query.filter_by(short = url_short).first() and tries < 100:
+                url_short = namer.generate_url()
+                tries+=1
 
             new_url = Url(long = url_long, short = url_short)
+            
             try:
                 db.session.add(new_url)
                 db.session.commit()
-                flash(f'{url}{url_short}')
+                flash(f'Your url is: {url}{url_short}')
+
             except:
                 return "Error adding url"
             

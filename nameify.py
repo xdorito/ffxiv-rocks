@@ -7,10 +7,10 @@ class Nameify:
     # lower case alpha numeric constant
     ALNUM = string.printable[0:62]
 
-    def __init__(self, debug = False):
-        self.names = self.load_names()
+    def __init__(self, file = 'names.csv', debug = False):
+        self.names = self.load_names(file)
 
-    def load_names(self, file = 'names.csv'):
+    def load_names(self, file):
         names = []
         with open(file) as names_file:
             csv_reader = csv.reader(names_file)
