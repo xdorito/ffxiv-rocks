@@ -50,7 +50,8 @@ def redirect_to_path(path):
     # print(path)
     found_url = Url.query.filter_by(short= path).first()
     if found_url:
-        return redirect(f'http://{found_url.long}')
+        url = re.sub("https?://", "", found_url.long)
+        return redirect(f'http://{url}')
     else:
         flash(f'Url not found')
         return redirect('/')
